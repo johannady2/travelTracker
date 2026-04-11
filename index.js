@@ -38,12 +38,7 @@ app.use(express.static("public"));
 
 app.get("/", async (req, res) =>
 {
-  //Write your code here.
-
-/*for (let i = 0; i < visitedCountriesDB.length; i++)
-{
-  visitedCountriesCountryCodes.push(visitedCountriesDB[i].country_code);
-}*/
+//NOTE: the solution1.js has a better code.
 
 visitedCountriesDB.forEach(country =>
 {
