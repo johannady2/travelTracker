@@ -10,22 +10,17 @@
 
 <body>
   <form action="/add" method="post">
-    <p> <%= locals.error ? error :  'Enter country name'%></p>
-    <select name="country" required autofocus>
+    <span> 
+    <select name="country" required autofocus class="old-select">
       <% displayAllCountryNames.forEach((country) => { %>
         <option value="<%= country %>"><%= country %></option>
       <% }); %>
     </select>
     
-    <button type="submit">Add</button>
+    <button type="submit">Add</button></span>
+    <p></p><%= locals.error ? error :  'Choose a country'%></p>
   </form>
 
-<%# 
-<form action="/add" method="post">
-  <input type="text" name="country" autofocus placeholder="<%# locals.error ? error : 'Enter country name' %>" required>
-  <button type="submit">Add</button>
-</form>
-%>
 
   <section class="ag-canvas">
     <svg class="ag-canvas_svg" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
@@ -399,6 +394,10 @@
         console.log(`No SVG element found for country code: ${code}`);
       }
     });
+
+
+
+
   </script>
 </body>
 
