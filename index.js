@@ -38,7 +38,12 @@ app.get("/", async (req, res) =>
   visitedCountriesCountryCodes.push(country.country_code);
 });
 
-  res.render("index.ejs", { countries: visitedCountriesCountryCodes , total: totalCountriesVisited});
+  res.render("index.ejs", 
+    { countries: visitedCountriesCountryCodes ,
+       total: totalCountriesVisited,
+      error: req.query.error === "notfound" ? "Country not found" : null
+
+    });
 });
 
 
@@ -51,10 +56,21 @@ app.post("/add", async (req,res)=>
      if (result.rows.length !== 0)
      {
       console.log(result);
-      await db.query('INSERT INTO visited_countries(country_code) VALUES($1)', [result.rows[0].country_code]);
-      
+      await db.query('INSERT INTO visited_countries(country_code) VALUES($1)', [result.rows[0].country_code]); 
+      res.redirect("/");
+    }
+     else
+     {
+      const visited = await db.query("SELECT country_code FROM visited_countries");
+        const codes = visited.rows.map(c => c.country_code);
+
+        return res.render("index.ejs", {
+          countries: codes,
+          total: codes.length,
+          error: "Country not found"
+        });
      }
-    res.redirect("/");
+    
   
 });
 
