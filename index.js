@@ -49,7 +49,7 @@ console.log(await allVisitedCountryCodes());
 app.post("/add", async (req,res)=>
 {
   console.log(req.body.country);
-    let result = await db.query(`SELECT country_code FROM countries WHERE country_name = $1`, [req.body.country]);
+    let result = await db.query(`SELECT country_code FROM countries WHERE country_name ILIKE $1`, [req.body.country]);
      if (result.rows.length !== 0)
      {
       console.log(result);
