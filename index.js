@@ -29,14 +29,11 @@ app.get("/", async (req, res) =>
 {
 //NOTE: the solution1.js has a better code.
 
-  let result = await db.query("SELECT country_code FROM visited_countries");
+console.log(await allVisitedCountryCodes());
+  let visitedCountriesCountryCodes = await allVisitedCountryCodes();
+  let totalCountriesVisited = visitedCountriesCountryCodes.length;
 
-  let visitedCountriesCountryCodes = [];
-  let totalCountriesVisited = result.rows.length;
 
-  result.rows.forEach(country => {
-  visitedCountriesCountryCodes.push(country.country_code);
-});
 
   res.render("index.ejs", 
     { countries: visitedCountriesCountryCodes ,
@@ -61,18 +58,33 @@ app.post("/add", async (req,res)=>
     }
      else
      {
-      const visited = await db.query("SELECT country_code FROM visited_countries");
-        const codes = visited.rows.map(c => c.country_code);
+      
+       console.log(await allVisitedCountryCodes());
+      let codes = await allVisitedCountryCodes();
+      let totalCountries = codes.length;
+
+
 
         return res.render("index.ejs", {
           countries: codes,
-          total: codes.length,
+          total: totalCountries,
           error: "Country not found"
         });
      }
     
   
 });
+
+const allVisitedCountryCodes = async () =>
+{
+  const result = await db.query("SELECT country_code FROM visited_countries");
+
+  let country_codes = [];
+  result.rows.forEach((country) => {
+    country_codes.push(country.country_code);
+  });
+  return country_codes;
+};
 
 
 app.listen(port, () => {
