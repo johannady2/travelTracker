@@ -10,7 +10,13 @@
 
 <body>
   <form action="/add" method="post">
-    <input type="text" name="country" autofocus placeholder="<%= locals.error ? error :  'Enter country name'%>" required>
+    <p> <%= locals.error ? error :  'Enter country name'%></p>
+    <select name="country" required autofocus>
+      <% displayAllCountryNames.forEach((country) => { %>
+        <option value="<%= country %>"><%= country %></option>
+      <% }); %>
+    </select>
+    
     <button type="submit">Add</button>
   </form>
 
@@ -374,12 +380,18 @@
   <h2 class="total-count">Total Countries: <%=total%>
   </h2>
   <script>
-    const country_codes = "<%= countries %>".split(",") 
-    console.log(typeof ("<%= countries %>"))
+    const country_codes = "<%= countries %>".split(",").filter(code => code.trim() !== "");
+    console.log("Visited country codes:", country_codes);
     country_codes.forEach(code => {
-      document.getElementById(code).style.fill = 'teal'
+      const el = document.getElementById(code.trim());
+      if (el) {
+        el.style.fill = 'teal';
+        console.log(`Highlighted: ${code}`);
+      } else {
+        //console.warn(`No SVG element found for country code: ${code}`);
+        console.log(`No SVG element found for country code: ${code}`);
+      }
     });
-
   </script>
 </body>
 

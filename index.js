@@ -36,7 +36,8 @@ console.log(await allVisitedCountryCodes());
 
 
   res.render("index.ejs", 
-    { countries: visitedCountriesCountryCodes ,
+    { displayAllCountryNames: await selectAllCountyNames(),
+      countries: visitedCountriesCountryCodes.join(",") ,
        total: totalCountriesVisited,
       error: req.query.error === "notfound" ? "Country not found" : null
 
@@ -52,15 +53,16 @@ app.post("/add", async (req,res)=>
     let result = await db.query(`SELECT country_code FROM countries WHERE country_name ILIKE $1`, [req.body.country]);
      if (result.rows.length !== 0)
      {
-      console.log(result);
+      //console.log(result);
       if (await countryAlreadyAdded(result.rows[0].country_code))
       {
-        console.log(await allVisitedCountryCodes());
+       // console.log(await allVisitedCountryCodes());
         let codes = await allVisitedCountryCodes();
         let totalCountries = codes.length;
 
         return res.render("index.ejs", {
-          countries: codes,
+          displayAllCountryNames: await selectAllCountyNames(),
+          countries: codes.join(","),
           total: totalCountries,
           error: "Country already exists in the visited list"
         });
@@ -75,14 +77,15 @@ app.post("/add", async (req,res)=>
      else
      {
       
-       console.log(await allVisitedCountryCodes());
+       //console.log(await allVisitedCountryCodes());
       let codes = await allVisitedCountryCodes();
       let totalCountries = codes.length;
 
 
 
         return res.render("index.ejs", {
-          countries: codes,
+          displayAllCountryNames: await selectAllCountyNames(),
+          countries: codes.join(","),
           total: totalCountries,
           error: "Please enter a valid country name."
         });
@@ -115,6 +118,16 @@ const countryAlreadyAdded = async (country_code) =>
     return false;
   } 
 };
+const selectAllCountyNames = async () =>
+{
+  const result = await db.query("SELECT country_name FROM countries");
+
+  let all_country_names = [];
+  result.rows.forEach((country) => {
+    all_country_names.push(country.country_name);
+  });
+  return all_country_names;
+}
 
 
 app.listen(port, () => {
