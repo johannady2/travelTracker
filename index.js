@@ -41,6 +41,24 @@ app.get("/", async (req, res) =>
   res.render("index.ejs", { countries: visitedCountriesCountryCodes , total: totalCountriesVisited});
 });
 
+
+//POSTING new country_code by writing a country name
+
+app.post("/add", async (req,res)=>
+{
+  console.log(req.body.country);
+    let result = await db.query(`SELECT country_code FROM countries WHERE country_name = $1`, [req.body.country]);
+     if (result.rows.length !== 0)
+     {
+      console.log(result);
+      await db.query('INSERT INTO visited_countries(country_code) VALUES($1)', [result.rows[0].country_code]);
+      
+     }
+    res.redirect("/");
+  
+});
+
+
 app.listen(port, () => {
   console.log(`Server running on http://localhost:${port}`);
 });
