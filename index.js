@@ -53,8 +53,24 @@ app.post("/add", async (req,res)=>
      if (result.rows.length !== 0)
      {
       console.log(result);
-      await db.query('INSERT INTO visited_countries(country_code) VALUES($1)', [result.rows[0].country_code]); 
+      if (await countryAlreadyAdded(result.rows[0].country_code))
+      {
+        console.log(await allVisitedCountryCodes());
+        let codes = await allVisitedCountryCodes();
+        let totalCountries = codes.length;
+
+        return res.render("index.ejs", {
+          countries: codes,
+          total: totalCountries,
+          error: "Country already exists in the visited list"
+        });
+      }
+      else
+      {
+        await db.query('INSERT INTO visited_countries(country_code) VALUES($1)', [result.rows[0].country_code]);
+      
       res.redirect("/");
+      }
     }
      else
      {
@@ -68,7 +84,7 @@ app.post("/add", async (req,res)=>
         return res.render("index.ejs", {
           countries: codes,
           total: totalCountries,
-          error: "Country not found"
+          error: "Please enter a valid country name."
         });
      }
     
@@ -84,6 +100,20 @@ const allVisitedCountryCodes = async () =>
     country_codes.push(country.country_code);
   });
   return country_codes;
+};
+
+const countryAlreadyAdded = async (country_code) =>
+{
+  const result = await db.query("SELECT country_code FROM visited_countries WHERE country_code = $1", [country_code]);
+
+  if (result.rows.length !== 0)
+  {
+    return true;
+  }
+  else
+  {
+    return false;
+  } 
 };
 
 
